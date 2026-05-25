@@ -27,7 +27,7 @@ def create_app():
     #هندلة الايرورز
     @app.errorhandler(404)
     def error(er):
-        return "قريبا... شكرا لتجربتك متاح حاليا صفحة البوستات والبروفايل فقط", 404
+        return "قريبا... شكرا لتجربتك", 404
     @app.errorhandler(502)
     def ero502(er):
         return "حصل خطأ هصلحه..",502
