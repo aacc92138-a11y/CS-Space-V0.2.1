@@ -1,0 +1,11 @@
+flask_smorest
+flask
+python-dotenv
+flask_sqlalchemy
+wtforms
+flask_wtf
+flask_login
+werkzeug
+gunicorn
+flask_migrate
+email-validator

@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>الملف الشخصي - CS Space</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="{{url_for('static',filename='icon.png')}}" type="image/png">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(99, 102, 241, 0.2) 0%, transparent 40%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        /* Navigation - Mobile First */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: rgba(10, 10, 26, 0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: none;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        .btn-logout {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .btn-logout:hover, .btn-logout:active {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+        }
+
+        .menu-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .logo i {
+            font-size: 1rem;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            z-index: 2000;
+            transition: right 0.3s ease;
+            padding: 2rem 1.5rem;
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu-close {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .mobile-menu-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .mobile-menu-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .mobile-menu-links a:hover, .mobile-menu-links a:active {
+            background: rgba(99, 102, 241, 0.2);
+            color: #fff;
+        }
+
+        .mobile-menu-links a i {
+            color: #6366f1;
+            width: 24px;
+        }
+
+        .profile-container {
+            max-width: 1000px;
+            margin: 1rem auto;
+            padding: 0 1rem;
+        }
+
+        .profile-header {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 1.5rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 120px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(139, 92, 246, 0.2) 100%);
+            z-index: 0;
+        }
+
+        .profile-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1rem;
+        }
+
+        .avatar-container {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .avatar:active {
+            transform: scale(0.95);
+        }
+
+        .avatar::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            padding: 2px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            to { transform: rotate(360deg); }
+        }
+
+        .avatar-upload-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 50%;
+        }
+
+        .avatar:active .avatar-upload-overlay,
+        .avatar:hover .avatar-upload-overlay {
+            opacity: 1;
+        }
+
+        .avatar-upload-overlay i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .online-status {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 16px;
+            height: 16px;
+            background: #10b981;
+            border-radius: 50%;
+            border: 2px solid #1a1a2e;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            50% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+        }
+
+        .profile-info {
+            width: 100%;
+        }
+
+        .profile-name-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            word-break: break-word;
+        }
+
+        .edit-btn {
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            color: #a5b4fc;
+            padding: 0.3rem 0.6rem;
+            border-radius: 15px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+
+        .edit-btn:active {
+            transform: scale(0.95);
+            background: rgba(99, 102, 241, 0.4);
+        }
+
+        .profile-id {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(99, 102, 241, 0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: #a5b4fc;
+            margin-bottom: 0.75rem;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .profile-email {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+            margin-bottom: 1rem;
+            word-break: break-all;
+        }
+
+        .profile-bio-container {
+            position: relative;
+            max-width: 100%;
+            padding: 0 0.5rem;
+        }
+
+        .profile-bio {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.7;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .bio-btn{
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            color: #a5b4fc;
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-top: 0.5rem;
+        }
+        .bio-edit-btn {
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            color: #a5b4fc;
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-top: 0.5rem;
+        }
+
+        .bio-edit-btn:active {
+            transform: scale(0.95);
+            background: rgba(99, 102, 241, 0.4);
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            min-width: 60px;
+        }
+
+        .stat-item:active {
+            transform: scale(0.95);
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #fff;
+            display: block;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .follow-btn-container {
+            margin-top: 1.5rem;
+        }
+
+        .follow-btn {
+            padding: 0.875rem 2.5rem;
+            font-size: 1rem;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            max-width: 280px;
+            justify-content: center;
+        }
+
+        .follow-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 10px rgba(99, 102, 241, 0.4);
+        }
+
+        .follow-btn.following {
+            background: transparent;
+            border: 2px solid #6366f1;
+            color: #6366f1;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 25px 25px 0 0;
+            padding: 1.5rem;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        @media (min-width: 640px) {
+            .modal-overlay {
+                align-items: center;
+            }
+
+            .modal {
+                border-radius: 25px;
+                max-width: 500px;
+                transform: scale(0.9) translateY(20px);
+                max-height: 85vh;
+            }
+
+            .modal-overlay.active .modal {
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 0.875rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn-secondary:active {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(0.98);
+        }
+
+        .btn-primary-modal {
+            flex: 1;
+            padding: 0.875rem;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary-modal:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 10px rgba(99, 102, 241, 0.4);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(99, 102, 241, 0.95);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 0.875rem 1.5rem;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 4000;
+            font-weight: 600;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Hidden file input */
+        .file-input {
+            display: none;
+        }
+
+        /* Tablet and Desktop Styles */
+        @media (min-width: 768px) {
+            html {
+                font-size: 18px;
+            }
+
+            nav {
+                padding: 1rem 5%;
+            }
+
+            .nav-links {
+                display: flex;
+                gap: 1.5rem;
+            }
+
+            .menu-toggle {
+                display: none;
+            }
+
+            .btn-logout {
+                padding: 0.7rem 1.5rem;
+                font-size: 0.9rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .logo i {
+                font-size: 1.2rem;
+            }
+
+            .profile-container {
+                margin: 3rem auto;
+                padding: 0 2rem;
+            }
+
+            .profile-header {
+                border-radius: 30px;
+                padding: 3rem;
+            }
+
+            .profile-header::before {
+                height: 200px;
+            }
+
+            .profile-content {
+                flex-direction: row;
+                align-items: flex-end;
+                text-align: right;
+                gap: 3rem;
+            }
+
+            .avatar {
+                width: 150px;
+                height: 150px;
+                font-size: 4rem;
+            }
+
+            .online-status {
+                width: 20px;
+                height: 20px;
+                bottom: 10px;
+                right: 10px;
+                border-width: 3px;
+            }
+
+            .profile-name-container {
+                justify-content: flex-start;
+            }
+
+            .profile-name {
+                font-size: 2.5rem;
+            }
+
+            .edit-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .profile-id {
+                padding: 0.4rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .profile-email {
+                justify-content: flex-start;
+                font-size: 1rem;
+            }
+
+            .profile-bio-container {
+                max-width: 500px;
+                padding: 0;
+            }
+
+            .profile-bio {
+                font-size: 1rem;
+            }
+
+            .bio-edit-btn {
+                position: absolute;
+                top: 0;
+                left: 0;
+                margin-top: 0;
+                opacity: 0;
+            }
+
+            .profile-bio-container:hover .bio-edit-btn {
+                opacity: 1;
+            }
+
+            .profile-stats {
+                justify-content: flex-start;
+                gap: 3rem;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+            }
+
+            .stat-label {
+                font-size: 0.9rem;
+            }
+
+            .follow-btn {
+                width: auto;
+                padding: 1rem 3rem;
+                font-size: 1.1rem;
+            }
+
+            .toast {
+                bottom: 2rem;
+                right: 2rem;
+                left: auto;
+                transform: translateY(100px);
+                padding: 1rem 2rem;
+            }
+
+            .toast.show {
+                transform: translateY(0);
+            }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 10px;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        @media (hover: none) {
+            .avatar-upload-overlay {
+                opacity: 0.7;
+                background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
+            }
+
+            .avatar-upload-overlay i {
+                position: absolute;
+                bottom: 15px;
+            }
+        }
+
+        @supports (padding-top: env(safe-area-inset-top)) {
+            nav {
+                padding-top: calc(0.75rem + env(safe-area-inset-top));
+            }
+
+            .modal {
+                padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+            }
+        }
+    </style>
+
+
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <div class="logo">
+                <i class="fas fa-code"></i>
+                CS Space
+            </div>
+            <button class="mobile-menu-close" onclick="closeMobileMenu()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mobile-menu-links">
+            <a href="/posts"><i class="fas fa-globe"></i>المناقشات</a>
+            <a href="/projects"><i class="fas fa-project-diagram"></i> المشاريع</a>
+            <a href="/achievements"><i class="fas fa-trophy"></i> الإنجازات</a>
+            <a href="/curriculum"><i class="fas fa-book"></i> المناهج</a>
+            <a href="/cs"><i class="fas fa-university"></i> كليات الحاسبات</a>
+            <a href="/logout" style="color: #ef4444; margin-top: 1rem;"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-left">
+            <a href="/logout" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="logout-text">خروج</span>
+            </a>
+            <div class="nav-links">
+                <a href="/posts">المناقشات</a>
+                <a href="/projects">المشاريع</a>
+                <a href="/achievements">الإنجازات</a>
+                <a href="/curriculum">المناهج</a>
+                <a href="/cs">كليات الحاسبات</a>
+            </div>
+        </div>
+        <button class="menu-toggle" onclick="openMobileMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="logo">
+            <i class="fas fa-code"></i>
+            CS Space
+        </div>
+    </nav>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-content">
+                <div class="avatar-container">
+                    <div class="avatar" onclick="document.getElementById('avatarInput').click()">
+                        <i class="fas fa-user" id="avatarIcon"></i>
+                        <img id="avatarImg" style="width: 100%; height: 100%; object-fit: cover; display: none;" alt="Profile" />
+                        <div class="avatar-upload-overlay">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    <input type="file" id="avatarInput" class="file-input" accept="image/*" onchange="updateAvatar(this)">
+                    <div class="online-status"></div>
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name-container">
+                        <h1 class="profile-name" id="profileName">{{user.fname}} {{user.lname}}</h1>
+                        <button class="edit-btn" onclick="openEditModal()">
+                            <i class="fas fa-pen"></i>
+                            <span>تعديل</span>
+                        </button>
+                    </div>
+                    <div class="profile-id">
+                        <i class="fas fa-id-card"></i>
+                        ID: {{user.id}}
+                    </div>
+                    <div class="profile-email">
+                        <i class="fas fa-envelope"></i>
+                        <span id="profileEmail">{{user.email}}</span>
+                    </div>
+                    <div class="profile-email">
+                        <i class="fas fa-share"></i>
+                        <span id="profileEmail"><a href="/profile/{{user.id}}" style="color:white">شارك بروفايلك مع صحابك</a></span>
+                    </div>
+                    <div class="profile-bio-container">
+                        <p class="profile-bio" id="profileBio">
+                            {{user.bio}}
+                        </p>
+                        <button class="bio-edit-btn" onclick="openBioModal()">
+                            <i class="fas fa-pen"></i>
+                            تعديل النبذة
+                        </button>
+
+                        <a class="bio-btn" href="/myprofile/privatepost" style="text-decoration: none;" ><i class="fa fa-user-secret"></i>منشوراتي الخاصة </a>
+                    </div>
+
+                    <div class="profile-stats">
+                        <div class="stat-item" onclick="showToast('عرض المتابعين')">
+                            <span class="stat-value" id="followersCount">{{counter1}}</span>
+                            <span class="stat-label">متابع</span>
+                        </div>
+                        <div class="stat-item" onclick="showToast('عرض المتابعون')">
+                            <span class="stat-value">{{counter2}}</span>
+                            <span class="stat-label">يتابع</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="postsCount">{{postscount}}</span>
+                            <span class="stat-label">منشور</span>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="editProfileModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">تعديل الملف الشخصي</h2>
+                <button class="modal-close" onclick="closeEditModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="editProfileForm" method='POST' action="/edit">
+                {{form1.hidden_tag()}}
+                <div class="form-group">
+                    {{form1.fname.label(class="form-label")}}
+                    {{form1.fname( class="form-input" ,id="editFname" ,placeholder="الاسم الأول")}}
+                </div>
+                <div class="form-group">
+                    {{form1.lname.label(class="form-label")}}
+                    {{form1.lname(class="form-input" ,id="editLname" ,placeholder="الاسم الأخير" )}}
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeEditModal()">إلغاء</button>
+                    {{form1.submit(class="btn-primary-modal")}}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="editBioModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">تعديل النبذة التعريفية</h2>
+                <button class="modal-close" onclick="closeBioModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="editBioForm" method="POST">
+                {{form.hidden_tag()}}
+                <div class="form-group">
+                    <label class="form-label">نبذة عنك</label>
+                    {{form.bio(class="form-input form-textarea" ,id="editBioText" ,placeholder="اكتب نبذة قصيرة عن yourself...")}}
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeBioModal()">إلغاء</button>
+                    {{form.submit(class="btn-primary-modal")}}
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let isFollowing = false;
+        let followersCount = 1247;
+
+        // Mobile Menu Functions
+        function openMobileMenu() {
+            document.getElementById('mobileMenu').classList.add('active');
+            document.getElementById('mobileMenuOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileMenu() {
+            document.getElementById('mobileMenu').classList.remove('active');
+            document.getElementById('mobileMenuOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function toggleFollow() {
+            const btn = document.getElementById('followBtn');
+            const text = document.getElementById('followText');
+            const countElement = document.getElementById('followersCount');
+
+            isFollowing = !isFollowing;
+
+            if (isFollowing) {
+                btn.classList.add('following');
+                text.textContent = 'متابع';
+                btn.innerHTML = '<i class="fas fa-check"></i><span id="followText">متابع</span>';
+                followersCount++;
+                showToast('تمت المتابعة بنجاح!');
+            } else {
+                btn.classList.remove('following');
+                text.textContent = 'متابعة';
+                btn.innerHTML = '<i class="fas fa-user-plus"></i><span id="followText">متابعة</span>';
+                followersCount--;
+                showToast('تم إلغاء المتابعة');
+            }
+
+            countElement.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                countElement.textContent = followersCount.toLocaleString();
+                countElement.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function openEditModal() {
+            document.getElementById('editProfileModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editProfileModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function saveProfileChanges(event) {
+            event.preventDefault();
+            const fname = document.getElementById('editFname').value;
+            const lname = document.getElementById('editLname').value;
+            const email = document.getElementById('editEmail').value;
+
+            document.getElementById('profileName').textContent = fname + ' ' + lname;
+            document.getElementById('profileEmail').textContent = email;
+
+            showToast('تم حفظ التغييرات بنجاح!');
+            closeEditModal();
+        }
+
+        function openBioModal() {
+            const currentBio = document.getElementById('profileBio').textContent.trim();
+            document.getElementById('editBioText').value = currentBio;
+            document.getElementById('editBioModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeBioModal() {
+            document.getElementById('editBioModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+
+        function updateAvatar(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatarImg').src = e.target.result;
+                    document.getElementById('avatarImg').style.display = 'block';
+                    document.getElementById('avatarIcon').style.display = 'none';
+                    showToast('تم تحديث الصورة الشخصية!');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        document.getElementById('editProfileModal').addEventListener('click', function(e) {
+            if (e.target === this) closeEditModal();
+        });
+
+        document.getElementById('editBioModal').addEventListener('click', function(e) {
+            if (e.target === this) closeBioModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeEditModal();
+                closeBioModal();
+                closeMobileMenu();
+            }
+        });
+
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.getElementById('mobileMenu').addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+
+        document.getElementById('mobileMenu').addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            if (touchStartX - touchEndX > 100) {
+                closeMobileMenu();
+            }
+        }, false);
+
+        window.addEventListener('load', () => {
+            const stats = document.querySelectorAll('.stat-value');
+            stats.forEach((stat, index) => {
+                stat.style.opacity = '0';
+                stat.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    stat.style.transition = 'all 0.5s ease';
+                    stat.style.opacity = '1';
+                    stat.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerHeight < 500) {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.maxHeight = '95vh';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

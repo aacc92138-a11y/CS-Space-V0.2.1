@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="/vip/action" method="POST">
+        <label for="name">Name</label>
+        <input type="text" name="name">
+        <label for="password">Password</label>
+        <input type="text" name="password">
+        <label for="id">Id</label>
+        <input type="text" name="id">
+        <input list="choices" name="choices">
+        <datalist id="choices">
+            <option value="Badge">Badge</option>
+            <option value="Delete">Delete User</option>
+        </datalist>
+        <input type="submit">
+
+    </form>
+</body>
+</html>
