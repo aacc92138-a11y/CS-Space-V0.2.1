@@ -114,7 +114,7 @@ def privatepostsforuser(id):
     print(current_user.id,[i.user_id for i in followers])
     if current_user.id != id:
         if current_user.id in [i.follower_id for i in followers] and id in [j.follower_id for j in current_user_followers]:
-            return render_template('privateposts/FollowersPrivate.html',fcount=followerscounter,fingcount=followingcounter,postc=postscount,user=user,posts=posts)
+            return render_template('privateposts/FollowersPrivate.html',likes=Likes,comments=Comments,fcount=followerscounter,fingcount=followingcounter,postc=postscount,user=user,posts=posts)
         else:
             if current_user.id not in [i.user_id for i in followers]:
                 return "انت مش من متابعين المستخدم"
