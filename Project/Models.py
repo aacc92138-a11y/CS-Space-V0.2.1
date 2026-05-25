@@ -8,8 +8,8 @@ def LoadUser(id):
 
 class User(db.Model,UserMixin):
     id = db.Column(db.Integer,primary_key=True)
-    fname = db.Column(db.Text,index=True,unique=True)
-    lname = db.Column(db.Text,index=True,unique=True)
+    fname = db.Column(db.Text,index=True)
+    lname = db.Column(db.Text,index=True)
     email = db.Column(db.Text,unique=True)
     major = db.Column(db.Text,index=True)
     password = db.Column(db.Text)
