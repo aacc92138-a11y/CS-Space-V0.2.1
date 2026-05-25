@@ -1251,13 +1251,16 @@
                         </a>
                         <div class="author-details">
                             <h3>
-                                {{i.author.fname}} {{i.author.lname}}
+                                {% if i.author.badges == 'diamond' %}
                                 <i class="fas fa-gem diamond-badge"></i>
+                                {% elif i.author.badges == 'classic' %}
+                                <i class="fas fa-certificate classic-badge"></i>
+                                {% endif %}
                             </h3>
                             <div class="post-meta">
                                 <span>منذ 2 ساعة</span>
                                 <span>•</span>
-                                <span><i class="fas fa-globe"></i></span>
+                                <span><i class="fas fa-lock private-badge"></i></span>
                             </div>
                         </div>
                     </div>
